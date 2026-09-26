@@ -86,10 +86,10 @@ export const ContatoSchema = z.object({
     .string()
     .trim()
     .regex(whatsappRegex, 'Informe um WhatsApp válido (ex: (11) 91234-5678)'),
-  instagram: z
-    .string()
-    .trim()
-    .regex(instagramRegex, 'Handle do Instagram inválido'),
+  instagram: z.preprocess(
+    (val) => (typeof val === 'string' && val.trim() === '' ? undefined : val),
+    z.string().trim().regex(instagramRegex, 'Handle do Instagram inválido').optional()
+  ),
   email: z
     .string()
     .trim()

@@ -26,7 +26,7 @@ const DEFAULT_VALUES: BriefingData = {
   },
   contato: {
     whatsapp: '',
-    instagram: '',
+    instagram: undefined,
     email: undefined,
     endereco: undefined,
   },

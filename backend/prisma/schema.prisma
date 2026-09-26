@@ -27,7 +27,7 @@ model Briefing {
 
   // Seção 2 — Contato
   contatoWhatsapp  String  @map("contato_whatsapp")
-  contatoInstagram String  @map("contato_instagram")
+  contatoInstagram String? @map("contato_instagram")
   contatoEmail     String? @map("contato_email")
   contatoEndereco  String? @map("contato_endereco")
 

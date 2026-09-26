@@ -29,7 +29,7 @@ export class BriefingMapper {
       },
       contato: {
         whatsapp: row.contatoWhatsapp,
-        instagram: row.contatoInstagram,
+        instagram: row.contatoInstagram ?? undefined,
         email: row.contatoEmail ?? undefined,
         endereco: row.contatoEndereco ?? undefined,
       },
@@ -79,9 +79,9 @@ export class BriefingMapper {
       negocioSlogan: data.negocio.slogan,
 
       contatoWhatsapp: BriefingMapper.normalizeWhatsapp(data.contato.whatsapp),
-      contatoInstagram: BriefingMapper.normalizeInstagram(
-        data.contato.instagram,
-      ),
+      contatoInstagram: data.contato.instagram
+        ? BriefingMapper.normalizeInstagram(data.contato.instagram)
+        : null,
       contatoEmail: data.contato.email ?? null,
       contatoEndereco: data.contato.endereco ?? null,
 
