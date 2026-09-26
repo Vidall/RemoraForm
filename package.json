@@ -1,0 +1,18 @@
+{
+  "name": "app-forms",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Remora Pages — monorepo do formulário de briefing para geração de landing pages",
+  "scripts": {
+    "dev": "pnpm --filter @remora/core build && pnpm --parallel --filter @remora/backend --filter @remora/frontend dev",
+    "dev:full": "pnpm --parallel --filter \"*\" dev",
+    "build": "pnpm --filter @remora/core build && pnpm --parallel --filter @remora/backend --filter @remora/frontend build",
+    "start": "pnpm --parallel --filter @remora/backend --filter @remora/frontend start",
+    "typecheck": "pnpm -r run typecheck",
+    "clean": "pnpm -r run clean"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  }
+}

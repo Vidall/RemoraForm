@@ -1,0 +1,90 @@
+@import '@fontsource/playfair-display/400.css';
+@import '@fontsource/playfair-display/600.css';
+@import '@fontsource/playfair-display/700.css';
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* ── Tema Claro (padrão) ───────────────────────────────────── */
+  :root {
+    color-scheme: light;
+    --color-bg:           #FAFAF8;
+    --color-bg-card:      #F2F2EE;
+    --color-bg-elevated:  #E8E8E4;
+    --color-border:       #DDDDD8;
+    --color-border-strong:#B8B8B2;
+    --color-fg:           #1A1A16;
+    --color-fg-muted:     #5C5C56;
+    --color-fg-subtle:    #8C8C86;
+  }
+
+  /* ── Tema Escuro ───────────────────────────────────────────── */
+  .dark {
+    color-scheme: dark;
+    --color-bg:           #0A0A0A;
+    --color-bg-card:      #141418;
+    --color-bg-elevated:  #1C1C22;
+    --color-border:       #27272A;
+    --color-border-strong:#3F3F46;
+    --color-fg:           #F5F5F0;
+    --color-fg-muted:     #A1A1AA;
+    --color-fg-subtle:    #71717A;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-bg text-fg font-sans;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-serif tracking-tight;
+  }
+
+  /* Scrollbar sutil no dark mode */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0a0a0a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #27272a;
+    border-radius: 8px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3f3f46;
+  }
+
+  /* Foco acessível uniforme */
+  :focus-visible {
+    @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-bg;
+  }
+}
+
+@layer components {
+  .field-label {
+    @apply block text-sm font-medium text-fg mb-2;
+  }
+  .field-hint {
+    @apply mt-1.5 text-xs text-fg-muted;
+  }
+  .field-error {
+    @apply mt-1.5 text-xs text-danger flex items-center gap-1.5;
+  }
+}
