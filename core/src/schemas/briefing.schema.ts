@@ -30,6 +30,16 @@ const instagramRegex = /^@?[A-Za-z0-9._]{1,30}$/;
 /** Slug de subdomínio — lowercase, alfanumérico e hífen, sem hífen no início/fim. */
 const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
+/**
+ * Helper para campos de string opcionais em formulários HTML.
+ * O DOM sempre emite "" em vez de undefined — normaliza antes do Zod.
+ */
+const optionalString = <T extends z.ZodTypeAny>(schema: T) =>
+  z.preprocess(
+    (val) => (typeof val === 'string' && val.trim() === '' ? undefined : val),
+    z.optional(schema),
+  );
+
 // ---------------------------------------------------------------
 // Enums de domínio (exportados para uso no frontend em selects)
 // ---------------------------------------------------------------
@@ -86,24 +96,15 @@ export const ContatoSchema = z.object({
     .string()
     .trim()
     .regex(whatsappRegex, 'Informe um WhatsApp válido (ex: (11) 91234-5678)'),
-  instagram: z.preprocess(
-    (val) => (typeof val === 'string' && val.trim() === '' ? undefined : val),
-    z.string().trim().regex(instagramRegex, 'Handle do Instagram inválido').optional()
+  instagram: optionalString(
+    z.string().trim().regex(instagramRegex, 'Handle do Instagram inválido'),
   ),
-  email: z
-    .string()
-    .trim()
-    .email('E-mail inválido')
-    .max(120, 'E-mail muito longo')
-    .optional()
-    .or(z.literal('').transform(() => undefined)),
-  endereco: z
-    .string()
-    .trim()
-    .min(5, 'Endereço muito curto')
-    .max(200, 'Endereço muito longo')
-    .optional()
-    .or(z.literal('').transform(() => undefined)),
+  email: optionalString(
+    z.string().trim().email('E-mail inválido').max(120, 'E-mail muito longo'),
+  ),
+  endereco: optionalString(
+    z.string().trim().min(5, 'Endereço muito curto').max(200, 'Endereço muito longo'),
+  ),
 });
 
 // ---------------------------------------------------------------
@@ -226,12 +227,9 @@ export const MetaSchema = z.object({
       slugRegex,
       'Slug inválido: use apenas letras minúsculas, números e hífens (ex: perfumaria1)',
     ),
-  observacoes: z
-    .string()
-    .trim()
-    .max(1000, 'Observações muito longas')
-    .optional()
-    .or(z.literal('').transform(() => undefined)),
+  observacoes: optionalString(
+    z.string().trim().max(1000, 'Observações muito longas'),
+  ),
 });
 
 // ---------------------------------------------------------------

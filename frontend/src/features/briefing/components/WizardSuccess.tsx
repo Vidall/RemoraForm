@@ -31,7 +31,7 @@ export function WizardSuccess({ response }: WizardSuccessProps) {
           <div className="flex flex-col md:flex-row md:justify-between md:items-baseline gap-1">
             <dt className="text-fg-muted">Subdomínio reservado</dt>
             <dd className="text-accent break-all">
-              {response.slugSubdominio}.remoralink.com
+              {response.dados.meta.slugSubdominio}.remoralink.com
             </dd>
           </div>
           <div className="flex flex-col md:flex-row md:justify-between md:items-baseline gap-1">
