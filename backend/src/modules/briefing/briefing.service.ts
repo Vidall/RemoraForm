@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import type { BriefingData, BriefingResponse, BriefingStatus } from '@remora/core';
+import { EmailService } from '../../infra/email/email.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { BriefingMapper } from './briefing.mapper';
 
@@ -23,7 +24,10 @@ import { BriefingMapper } from './briefing.mapper';
 export class BriefingService {
   private readonly logger = new Logger(BriefingService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly emailService: EmailService,
+  ) {}
 
   async create(data: BriefingData): Promise<BriefingResponse> {
     try {
@@ -33,6 +37,9 @@ export class BriefingService {
       this.logger.log(
         `Briefing criado id=${row.id} slug=${row.slugSubdominio}`,
       );
+
+      await this.dispatchSubmissionEmails(row.id, data);
+
       return BriefingMapper.toDomain(row);
     } catch (err) {
       if (
@@ -94,5 +101,56 @@ export class BriefingService {
       }
       throw err;
     }
+  }
+
+  /**
+   * Dispara em paralelo os e-mails de pós-submissão:
+   *  - Notificação para o admin (sempre).
+   *  - Confirmação para o cliente (somente se `contato.email` estiver preenchido).
+   *
+   * Usa `Promise.allSettled` para garantir que uma falha em qualquer canal
+   * não interrompa o outro nem propague erro ao endpoint. Os métodos do
+   * EmailService já absorvem erros internamente — este loop só existe para
+   * dar visibilidade adicional caso um deles retorne rejected inesperadamente.
+   */
+  private async dispatchSubmissionEmails(
+    briefingId: string,
+    data: BriefingData,
+  ): Promise<void> {
+    const clienteEmail = data.contato.email;
+
+    const tasks: Array<{ label: string; promise: Promise<void> }> = [
+      {
+        label: 'admin-notification',
+        promise: this.emailService.sendBriefingNotificationToAdmin({
+          briefingId,
+          clienteNome: data.meta.nomeCliente,
+          negocioNome: data.negocio.nome,
+          clienteEmail: clienteEmail ?? undefined,
+          whatsapp: data.contato.whatsapp,
+        }),
+      },
+    ];
+
+    if (clienteEmail && clienteEmail.length > 0) {
+      tasks.push({
+        label: 'client-confirmation',
+        promise: this.emailService.sendBriefingConfirmationToClient({
+          clienteEmail,
+          clienteNome: data.meta.nomeCliente,
+          briefingId,
+        }),
+      });
+    }
+
+    const results = await Promise.allSettled(tasks.map((t) => t.promise));
+
+    results.forEach((result, index) => {
+      if (result.status === 'rejected') {
+        this.logger.error(
+          `E-mail ${tasks[index].label} falhou inesperadamente (briefingId=${briefingId}): ${String(result.reason)}`,
+        );
+      }
+    });
   }
 }

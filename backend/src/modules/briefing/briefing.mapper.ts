@@ -67,11 +67,13 @@ export class BriefingMapper {
 
   /**
    * Converte o payload de domínio validado para o formato de create do Prisma.
-   * O status inicial é sempre `rascunho` — transições ficam no PATCH dedicado.
+   * O POST /briefing representa a submissão final do formulário pelo cliente,
+   * então o status inicial já é `submetido`. A transição `rascunho → submetido`
+   * só volta a existir quando houver salvamento automático de rascunhos.
    */
   static toPrisma(data: BriefingData): Prisma.BriefingCreateInput {
     return {
-      status: 'rascunho',
+      status: 'submetido',
 
       negocioNome: data.negocio.nome,
       negocioSegmento: data.negocio.segmento,
