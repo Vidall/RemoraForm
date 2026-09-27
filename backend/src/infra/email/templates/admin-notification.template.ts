@@ -17,7 +17,7 @@ export interface RenderedEmail {
   text: string;
 }
 
-const ADMIN_UI_BASE_URL = 'http://localhost:5173';
+const ADMIN_UI_BASE_URL = process.env.ADMIN_UI_BASE_URL;
 
 export function renderAdminNotificationEmail(
   params: AdminNotificationTemplateParams,

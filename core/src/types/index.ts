@@ -62,6 +62,11 @@ export interface BriefingResponse {
   criadoEm: string; // ISO 8601
   atualizadoEm: string; // ISO 8601
   status: BriefingStatus;
+  /** Timestamps de transição — preenchidos na primeira ocorrência de cada status. */
+  submetidoEm: string | null; // ISO 8601 | null
+  emProducaoEm: string | null; // ISO 8601 | null
+  publicadoEm: string | null; // ISO 8601 | null
+  arquivadoEm: string | null; // ISO 8601 | null
   dados: BriefingData;
 }
 

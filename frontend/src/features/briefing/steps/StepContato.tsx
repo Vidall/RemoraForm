@@ -36,6 +36,7 @@ export function StepContato() {
         inputMode="email"
         autoComplete="email"
         error={errors.contato?.email?.message}
+        hint="Informe seu e-mail para receber atualizações da sua landing page."
         {...register('contato.email')}
       />
 

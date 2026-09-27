@@ -4,6 +4,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import type { Prisma } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import type { BriefingData, BriefingResponse, BriefingStatus } from '@remora/core';
 import { EmailService } from '../../infra/email/email.service';
@@ -81,10 +82,42 @@ export class BriefingService {
     id: string,
     status: BriefingStatus,
   ): Promise<BriefingResponse> {
+    const existing = await this.prisma.briefing.findUnique({ where: { id } });
+    if (!existing) {
+      throw new NotFoundException({
+        statusCode: 404,
+        error: 'NotFound',
+        message: `Briefing ${id} não encontrado`,
+      });
+    }
+
+    // Preenche o timestamp correspondente ao novo status apenas na primeira
+    // ocorrência (idempotente): se o campo já tem valor, preserva o original.
+    // Para status 'rascunho' nenhum timestamp é tocado.
+    const now = new Date();
+    const timestampPatch: Prisma.BriefingUpdateInput = {};
+    switch (status) {
+      case 'submetido':
+        timestampPatch.submetidoEm = existing.submetidoEm ?? now;
+        break;
+      case 'em_producao':
+        timestampPatch.emProducaoEm = existing.emProducaoEm ?? now;
+        break;
+      case 'publicado':
+        timestampPatch.publicadoEm = existing.publicadoEm ?? now;
+        break;
+      case 'arquivado':
+        timestampPatch.arquivadoEm = existing.arquivadoEm ?? now;
+        break;
+      case 'rascunho':
+      default:
+        break;
+    }
+
     try {
       const row = await this.prisma.briefing.update({
         where: { id },
-        data: { status },
+        data: { status, ...timestampPatch },
       });
       this.logger.log(`Briefing ${id} → status=${status}`);
       return BriefingMapper.toDomain(row);

@@ -61,6 +61,10 @@ export class BriefingMapper {
       criadoEm: row.criadoEm.toISOString(),
       atualizadoEm: row.atualizadoEm.toISOString(),
       status: row.status as BriefingStatus,
+      submetidoEm: row.submetidoEm?.toISOString() ?? null,
+      emProducaoEm: row.emProducaoEm?.toISOString() ?? null,
+      publicadoEm: row.publicadoEm?.toISOString() ?? null,
+      arquivadoEm: row.arquivadoEm?.toISOString() ?? null,
       dados,
     };
   }
@@ -74,6 +78,7 @@ export class BriefingMapper {
   static toPrisma(data: BriefingData): Prisma.BriefingCreateInput {
     return {
       status: 'submetido',
+      submetidoEm: new Date(),
 
       negocioNome: data.negocio.nome,
       negocioSegmento: data.negocio.segmento,

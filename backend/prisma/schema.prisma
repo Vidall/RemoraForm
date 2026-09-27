@@ -19,6 +19,12 @@ model Briefing {
   atualizadoEm DateTime @updatedAt @map("atualizado_em")
   status       String   @default("rascunho")
 
+  // Timestamps de transição de status (preenchidos na primeira ocorrência)
+  submetidoEm  DateTime? @map("submetido_em")
+  emProducaoEm DateTime? @map("em_producao_em")
+  publicadoEm  DateTime? @map("publicado_em")
+  arquivadoEm  DateTime? @map("arquivado_em")
+
   // Seção 1 — Negócio
   negocioNome      String @map("negocio_nome")
   negocioSegmento  String @map("negocio_segmento")
