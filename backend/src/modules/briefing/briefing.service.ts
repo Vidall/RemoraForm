@@ -114,26 +114,72 @@ export class BriefingService {
         break;
     }
 
-    try {
-      const row = await this.prisma.briefing.update({
-        where: { id },
-        data: { status, ...timestampPatch },
+    const row = await this.prisma.briefing
+      .update({ where: { id }, data: { status, ...timestampPatch } })
+      .catch((err: unknown) => {
+        if (
+          err instanceof PrismaClientKnownRequestError &&
+          err.code === 'P2025'
+        ) {
+          throw new NotFoundException({
+            statusCode: 404,
+            error: 'NotFound',
+            message: `Briefing ${id} não encontrado`,
+          });
+        }
+        throw err;
       });
-      this.logger.log(`Briefing ${id} → status=${status}`);
-      return BriefingMapper.toDomain(row);
-    } catch (err) {
-      if (
-        err instanceof PrismaClientKnownRequestError &&
-        err.code === 'P2025'
-      ) {
-        throw new NotFoundException({
-          statusCode: 404,
-          error: 'NotFound',
-          message: `Briefing ${id} não encontrado`,
-        });
-      }
-      throw err;
+
+    this.logger.log(`Briefing ${id} → status=${status}`);
+
+    // Dispara e-mails para todas as transições visíveis ao cliente
+    if (status === 'submetido' || status === 'em_producao' || status === 'publicado') {
+      await this.dispatchStatusChangeEmails(row, status);
     }
+
+    return BriefingMapper.toDomain(row);
+  }
+
+  /**
+   * Dispara em paralelo os e-mails de atualização de status.
+   * Admin sempre recebe; cliente recebe se tiver e-mail cadastrado.
+   */
+  private async dispatchStatusChangeEmails(
+    row: { id: string; nomeCliente: string; negocioNome: string; contatoEmail: string | null },
+    status: 'submetido' | 'em_producao' | 'publicado',
+  ): Promise<void> {
+    const tasks: Array<{ label: string; promise: Promise<void> }> = [
+      {
+        label: `admin-status-${status}`,
+        promise: this.emailService.sendStatusUpdateToAdmin({
+          clienteNome: row.nomeCliente,
+          negocioNome: row.negocioNome,
+          briefingId: row.id,
+          status,
+        }),
+      },
+    ];
+
+    if (row.contatoEmail) {
+      tasks.push({
+        label: `client-status-${status}`,
+        promise: this.emailService.sendStatusUpdateToClient({
+          clienteEmail: row.contatoEmail,
+          clienteNome: row.nomeCliente,
+          status,
+          briefingId: row.id,
+        }),
+      });
+    }
+
+    const results = await Promise.allSettled(tasks.map((t) => t.promise));
+    results.forEach((result, i) => {
+      if (result.status === 'rejected') {
+        this.logger.error(
+          `E-mail ${tasks[i].label} falhou inesperadamente (briefingId=${row.id}): ${String(result.reason)}`,
+        );
+      }
+    });
   }
 
   /**

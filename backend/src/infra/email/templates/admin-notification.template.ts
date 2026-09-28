@@ -9,6 +9,8 @@ export interface AdminNotificationTemplateParams {
   negocioNome: string;
   clienteEmail?: string;
   whatsapp: string;
+  /** Lido do ConfigService em runtime — nunca do process.env em nível de módulo. */
+  adminUiBaseUrl: string;
 }
 
 export interface RenderedEmail {
@@ -16,8 +18,6 @@ export interface RenderedEmail {
   html: string;
   text: string;
 }
-
-const ADMIN_UI_BASE_URL = process.env.ADMIN_UI_BASE_URL;
 
 export function renderAdminNotificationEmail(
   params: AdminNotificationTemplateParams,
@@ -28,13 +28,14 @@ export function renderAdminNotificationEmail(
     negocioNome,
     clienteEmail,
     whatsapp,
+    adminUiBaseUrl,
   } = params;
 
   const emailInfo = clienteEmail && clienteEmail.length > 0
     ? clienteEmail
     : 'não informado';
 
-  const linkAdmin = `${ADMIN_UI_BASE_URL}/admin/briefings/${briefingId}`;
+  const linkAdmin = `${adminUiBaseUrl}/admin/briefings/${briefingId}`;
 
   const subject = `[RemoraPages] Novo briefing: ${negocioNome}`;
 

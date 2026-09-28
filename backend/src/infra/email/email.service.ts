@@ -11,6 +11,11 @@ import {
 import {
   renderClientConfirmationEmail,
 } from './templates/client-confirmation.template';
+import {
+  renderClientStatusUpdateEmail,
+  renderAdminStatusUpdateEmail,
+  type NotifiableStatus,
+} from './templates/status-update.template';
 
 /**
  * EmailService — camada de infraestrutura responsável pelo envio de
@@ -117,12 +122,16 @@ export class EmailService implements OnModuleInit {
         return;
       }
 
+      const adminUiBaseUrl =
+        this.configService.get<string>('ADMIN_UI_BASE_URL') ?? 'http://localhost:5173';
+
       const { subject, html, text } = renderAdminNotificationEmail({
         briefingId,
         clienteNome,
         negocioNome,
         clienteEmail,
         whatsapp,
+        adminUiBaseUrl,
       });
 
       const result = await this.resend.emails.send({
@@ -147,6 +156,112 @@ export class EmailService implements OnModuleInit {
     } catch (err) {
       this.logger.error(
         `Erro ao enviar notificação admin (briefingId=${briefingId})`,
+        err instanceof Error ? err.stack : String(err),
+      );
+    }
+  }
+
+  /**
+   * Notifica o cliente quando o status muda para `em_producao` ou `publicado`.
+   */
+  async sendStatusUpdateToClient(params: {
+    clienteEmail: string;
+    clienteNome: string;
+    status: NotifiableStatus;
+    briefingId: string;
+  }): Promise<void> {
+    const { clienteEmail, clienteNome, status, briefingId } = params;
+
+    try {
+      const from = this.getFrom();
+      const replyTo = this.getAdminEmail();
+      const { subject, html, text } = renderClientStatusUpdateEmail({
+        clienteNome,
+        briefingId,
+        status,
+      });
+
+      const result = await this.resend.emails.send({
+        from,
+        to: clienteEmail,
+        subject,
+        html,
+        text,
+        replyTo,
+      });
+
+      if (result.error) {
+        this.logger.error(
+          `Falha ao enviar status update ao cliente (${clienteEmail}) briefingId=${briefingId} status=${status}: ${JSON.stringify(result.error)}`,
+        );
+        return;
+      }
+
+      this.logger.log(
+        `Status update enviado ao cliente ${clienteEmail} (briefingId=${briefingId}, status=${status}, resendId=${result.data?.id ?? 'unknown'})`,
+      );
+    } catch (err) {
+      this.logger.error(
+        `Erro ao enviar status update ao cliente (${clienteEmail}) briefingId=${briefingId}`,
+        err instanceof Error ? err.stack : String(err),
+      );
+    }
+  }
+
+  /**
+   * Notifica o admin quando o status de um briefing muda.
+   */
+  async sendStatusUpdateToAdmin(params: {
+    clienteNome: string;
+    negocioNome: string;
+    briefingId: string;
+    status: NotifiableStatus;
+  }): Promise<void> {
+    const { clienteNome, negocioNome, briefingId, status } = params;
+
+    try {
+      const from = this.getFrom();
+      const adminEmail = this.getAdminEmail();
+
+      if (!adminEmail) {
+        this.logger.warn(
+          `ADMIN_EMAIL não configurado — status update admin descartado (briefingId=${briefingId})`,
+        );
+        return;
+      }
+
+      const adminUiBaseUrl =
+        this.configService.get<string>('ADMIN_UI_BASE_URL') ?? 'http://localhost:5173';
+
+      const { subject, html, text } = renderAdminStatusUpdateEmail({
+        clienteNome,
+        negocioNome,
+        briefingId,
+        status,
+        adminUiBaseUrl,
+      });
+
+      const result = await this.resend.emails.send({
+        from,
+        to: adminEmail,
+        subject,
+        html,
+        text,
+      });
+
+      if (result.error) {
+        this.logger.error(
+          `Falha ao enviar status update admin (briefingId=${briefingId} status=${status}): ${JSON.stringify(result.error)}`,
+        );
+        return;
+      }
+
+      this.logger.log(
+        `Status update admin enviado (briefingId=${briefingId}, status=${status}, resendId=${result.data?.id ?? 'unknown'})`,
+      );
+    } catch (err) {
+      this.logger.error(
+        `Erro ao enviar status update admin (briefingId=${briefingId})`,
         err instanceof Error ? err.stack : String(err),
       );
     }
