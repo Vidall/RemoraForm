@@ -11,6 +11,17 @@ export function Header() {
 
   return (
     <header className="w-full">
+      {/* ── Barra de anúncio — 100% gratuito ─────────────────── */}
+      <div className="w-full border-b border-accent/25 bg-gradient-to-r from-accent/[0.06] via-accent/[0.12] to-accent/[0.06] py-2.5">
+        <div className="mx-auto flex max-w-wizard items-center justify-center gap-2.5 px-4">
+          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent animate-pulse" />
+          <p className="text-center text-[11px] font-semibold tracking-wider text-accent">
+            Crie sua landing page GRÁTIS — Teste, valide, e pague só se gostar.
+          </p>
+          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent animate-pulse" />
+        </div>
+      </div>
+
       {/* ── Topbar ─────────────────────────────────────────────── */}
       <div className="w-full border-b border-border bg-bg-card/60 backdrop-blur-sm">
         <div className="mx-auto flex max-w-wizard items-center justify-between px-4 py-3">
@@ -85,7 +96,7 @@ export function Header() {
             Responda algumas perguntas sobre o seu negócio.
             Leva apenas{' '}
             <span className="text-fg font-medium">alguns minutos</span>{' '}
-            e nos dá tudo que precisamos para entregar algo incrível.
+            e nos dá tudo que precisamos para entregar algo incrível. Há! e o mais importante, <span className="text-fg font-medium">você não paga NADA!</span>
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-fg-subtle">
             <span className="flex items-center gap-1.5">

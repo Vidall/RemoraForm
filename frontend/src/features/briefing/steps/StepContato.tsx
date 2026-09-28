@@ -29,16 +29,41 @@ export function StepContato() {
         {...register('contato.instagram')}
       />
 
-      <Input
-        label="E-mail (opcional)"
-        placeholder="contato@perfumariadaana.com.br"
-        type="email"
-        inputMode="email"
-        autoComplete="email"
-        error={errors.contato?.email?.message}
-        hint="Informe seu e-mail para receber atualizações da sua landing page."
-        {...register('contato.email')}
-      />
+      <div className="space-y-3">
+        <Input
+          label="E-mail (opcional)"
+          placeholder="contato@perfumariadaana.com.br"
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          error={errors.contato?.email?.message}
+          {...register('contato.email')}
+        />
+
+        {/* Callout — acompanhe o status da sua landing */}
+        <div className="rounded-lg border border-accent/40 bg-gradient-to-r from-accent/[0.07] to-accent/[0.04] px-4 py-3.5">
+          <div className="flex items-start gap-3">
+            <svg
+              className="mt-0.5 h-4 w-4 shrink-0 text-accent"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            <div>
+              <p className="text-sm font-semibold leading-snug text-accent">
+                Acompanhe sua landing em tempo real
+              </p>
+              <p className="mt-1 text-xs leading-relaxed text-fg-muted">
+                Informe seu e-mail e receba notificações a cada etapa — do briefing até a publicação da sua página.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <Input
         label="Endereço (opcional)"

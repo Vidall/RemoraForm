@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { BriefingWizard } from './features/briefing/BriefingWizard';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
+import { SplashScreen } from './components/SplashScreen';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AdminProtectedRoute } from './features/admin/AdminProtectedRoute';
 import { AdminLoginPage } from './features/admin/pages/AdminLoginPage';
@@ -40,6 +41,7 @@ function PublicShell() {
 export function App() {
   return (
     <ThemeProvider>
+      <SplashScreen />
       <BrowserRouter>
         <Routes>
           {/* Rota pública — wizard de briefing */}
