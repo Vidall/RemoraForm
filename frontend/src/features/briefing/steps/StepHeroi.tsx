@@ -1,10 +1,15 @@
-import { useFormContext } from 'react-hook-form';
-import type { BriefingData } from '@remora/core';
+import { useFormContext, useWatch } from 'react-hook-form';
+import type { BriefingData, Segmento } from '@remora/core';
 import { Input, Textarea } from '@/components/ui';
+import {
+  SEGMENT_PLACEHOLDERS,
+  DEFAULT_PLACEHOLDERS,
+} from '../config/segment-placeholders';
 
 export function StepHeroi() {
   const {
     register,
+    control,
     watch,
     formState: { errors },
   } = useFormContext<BriefingData>();
@@ -12,6 +17,13 @@ export function StepHeroi() {
   const titulo = watch('heroi.titulo') ?? '';
   const subtitulo = watch('heroi.subtitulo') ?? '';
   const cta = watch('heroi.textoCTA') ?? '';
+
+  const segmentoValue = useWatch({ control, name: 'negocio.segmento' }) as
+    | Segmento
+    | undefined;
+  const placeholders = segmentoValue
+    ? (SEGMENT_PLACEHOLDERS[segmentoValue] ?? DEFAULT_PLACEHOLDERS)
+    : DEFAULT_PLACEHOLDERS;
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -37,7 +49,7 @@ export function StepHeroi() {
 
       <Input
         label="Título principal"
-        placeholder="Ex: Perfumes que contam histórias."
+        placeholder={placeholders.heroTitulo}
         maxLength={120}
         showCounter
         currentLength={titulo.length}
@@ -47,7 +59,7 @@ export function StepHeroi() {
 
       <Textarea
         label="Subtítulo"
-        placeholder="Uma frase de apoio que complementa o título e reforça o valor."
+        placeholder={placeholders.heroSubtitulo}
         maxLength={220}
         showCounter
         currentLength={subtitulo.length}

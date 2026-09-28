@@ -1,7 +1,8 @@
-import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
+import { Controller, useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import type { BriefingData } from '@remora/core';
 import { Button, Input, Textarea, Toggle } from '@/components/ui';
 import { cn } from '@/lib/cn';
+import { SEGMENT_PLACEHOLDERS, DEFAULT_PLACEHOLDERS } from '../config/segment-placeholders';
 
 const EMPTY_PRODUTO = {
   nome: '',
@@ -22,6 +23,11 @@ export function StepProdutos() {
     control,
     name: 'produtos',
   });
+
+  const segmento = useWatch({ control, name: 'negocio.segmento' });
+  const placeholders = segmento
+    ? SEGMENT_PLACEHOLDERS[segmento] ?? DEFAULT_PLACEHOLDERS
+    : DEFAULT_PLACEHOLDERS;
 
   const arrayError = errors.produtos?.message ?? errors.produtos?.root?.message;
   const produtosWatch = watch('produtos') ?? [];
@@ -64,7 +70,7 @@ export function StepProdutos() {
             <div className="space-y-4">
               <Input
                 label="Nome do produto"
-                placeholder="Ex: Perfume Íris Noir 100ml"
+                placeholder={placeholders.produtoNome}
                 maxLength={80}
                 showCounter
                 currentLength={nome.length}
@@ -73,7 +79,7 @@ export function StepProdutos() {
               />
               <Textarea
                 label="Descrição"
-                placeholder="Detalhe o produto — notas, uso, diferencial."
+                placeholder={placeholders.produtoDescricao}
                 maxLength={300}
                 showCounter
                 currentLength={desc.length}
@@ -84,7 +90,7 @@ export function StepProdutos() {
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <Input
                   label="Preço"
-                  placeholder="R$ 249,00"
+                  placeholder={placeholders.produtoPreco}
                   error={err?.preco?.message}
                   {...register(`produtos.${index}.preco`)}
                 />

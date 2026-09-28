@@ -1,8 +1,12 @@
-import { useFormContext, Controller } from 'react-hook-form';
+import { useFormContext, Controller, useWatch } from 'react-hook-form';
 import type { BriefingData, Segmento } from '@remora/core';
 import { Input } from '@/components/ui';
 import { SEGMENTOS_META, findSegmentoMeta } from '@/lib/segmento';
 import { cn } from '@/lib/cn';
+import {
+  SEGMENT_PLACEHOLDERS,
+  DEFAULT_PLACEHOLDERS,
+} from '../config/segment-placeholders';
 
 /**
  * Step I — Negócio (parte 1/2)
@@ -19,14 +23,19 @@ export function StepNegocioBasico() {
   } = useFormContext<BriefingData>();
 
   const nomeValue = watch('negocio.nome') ?? '';
-  const segmentoValue = watch('negocio.segmento') as Segmento | undefined;
+  const segmentoValue = useWatch({ control, name: 'negocio.segmento' }) as
+    | Segmento
+    | undefined;
   const meta = findSegmentoMeta(segmentoValue);
+  const placeholders = segmentoValue
+    ? (SEGMENT_PLACEHOLDERS[segmentoValue] ?? DEFAULT_PLACEHOLDERS)
+    : DEFAULT_PLACEHOLDERS;
 
   return (
     <div className="space-y-6 animate-fade-in">
       <Input
         label="Nome do negócio"
-        placeholder="Ex: Perfumaria da Ana"
+        placeholder={placeholders.negocioNome}
         maxLength={80}
         showCounter
         currentLength={nomeValue.length}
