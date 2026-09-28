@@ -1,0 +1,1 @@
+## Inserção de Imagens e arquivos estaticos.
