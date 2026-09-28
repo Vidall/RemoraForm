@@ -1,11 +1,19 @@
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { BriefingWizard } from './features/briefing/BriefingWizard';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { AdminProtectedRoute } from './features/admin/AdminProtectedRoute';
+import { AdminLoginPage } from './features/admin/pages/AdminLoginPage';
+import { AdminBriefingsListPage } from './features/admin/pages/AdminBriefingsListPage';
+import { AdminBriefingDetailPage } from './features/admin/pages/AdminBriefingDetailPage';
 
-export function App() {
+/**
+ * Shell da rota pública — mantém o layout original do wizard.
+ * Admin usa layout próprio (definido em cada página).
+ */
+function PublicShell() {
   return (
-    <ThemeProvider>
     <div className="relative flex min-h-screen flex-col bg-bg transition-colors duration-300">
       {/* Efeito de grid técnico no fundo — sutil, não distrai */}
       <div
@@ -26,6 +34,28 @@ export function App() {
 
       <Footer />
     </div>
+  );
+}
+
+export function App() {
+  return (
+    <ThemeProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Rota pública — wizard de briefing */}
+          <Route path="/" element={<PublicShell />} />
+
+          {/* Rotas admin */}
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route element={<AdminProtectedRoute />}>
+            <Route path="/admin/briefings" element={<AdminBriefingsListPage />} />
+            <Route
+              path="/admin/briefings/:id"
+              element={<AdminBriefingDetailPage />}
+            />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </ThemeProvider>
   );
 }

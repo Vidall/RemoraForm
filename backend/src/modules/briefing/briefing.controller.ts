@@ -8,10 +8,12 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { BriefingSchema } from '@remora/core';
 import type { BriefingData, BriefingResponse } from '@remora/core';
 import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { BriefingService } from './briefing.service';
 import { UpdateStatusSchema, UpdateStatusDto } from './dto/update-status.dto';
 
@@ -36,11 +38,13 @@ export class BriefingController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async findAll(): Promise<BriefingResponse[]> {
     return this.service.findAll();
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   async findOne(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ): Promise<BriefingResponse> {
@@ -48,6 +52,7 @@ export class BriefingController {
   }
 
   @Patch(':id/status')
+  @UseGuards(JwtAuthGuard)
   async updateStatus(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body(new ZodValidationPipe(UpdateStatusSchema)) body: UpdateStatusDto,
