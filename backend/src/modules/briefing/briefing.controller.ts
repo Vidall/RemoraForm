@@ -2,14 +2,17 @@ import {
   Body,
   Controller,
   Get,
+  Header,
   HttpCode,
   HttpStatus,
   Param,
   ParseUUIDPipe,
   Patch,
   Post,
+  Res,
   UseGuards,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { BriefingSchema } from '@remora/core';
 import type { BriefingData, BriefingResponse } from '@remora/core';
 import { ZodValidationPipe } from '../../pipes/zod-validation.pipe';
@@ -41,6 +44,19 @@ export class BriefingController {
   @UseGuards(JwtAuthGuard)
   async findAll(): Promise<BriefingResponse[]> {
     return this.service.findAll();
+  }
+
+  @Get(':id/export')
+  @UseGuards(JwtAuthGuard)
+  @Header('Content-Type', 'application/json')
+  async export(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<BriefingResponse> {
+    const briefing = await this.service.findOne(id);
+    const filename = `briefing-${briefing.dados.meta.slugSubdominio}-${id.slice(0, 8)}.json`;
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    return briefing;
   }
 
   @Get(':id')

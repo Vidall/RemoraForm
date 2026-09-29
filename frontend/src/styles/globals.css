@@ -10,6 +10,20 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Pulse de cor para "você não paga NADA!" no step 1 ── */
+@keyframes free-pulse {
+  0%, 100% {
+    color: var(--color-fg);
+  }
+  50% {
+    color: #C9A227;
+  }
+}
+
+.animate-free-pulse {
+  animation: free-pulse 2.5s ease-in-out infinite;
+}
+
 @layer base {
   /* ── Tema Claro (padrão) ───────────────────────────────────── */
   :root {

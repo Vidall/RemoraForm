@@ -1,4 +1,5 @@
 import { useTheme } from '../../contexts/ThemeContext';
+import { useWizardStep } from '../../features/briefing/WizardStepContext';
 
 /**
  * Header da aplicação RemoraPages.
@@ -8,6 +9,7 @@ import { useTheme } from '../../contexts/ThemeContext';
  */
 export function Header() {
   const { theme, toggle } = useTheme();
+  const { currentIndex } = useWizardStep();
 
   return (
     <header className="w-full">
@@ -96,7 +98,7 @@ export function Header() {
             Responda algumas perguntas sobre o seu negócio.
             Leva apenas{' '}
             <span className="text-fg font-medium">alguns minutos</span>{' '}
-            e nos dá tudo que precisamos para entregar algo incrível. Há! e o mais importante, <span className="text-fg font-medium">você não paga NADA!</span>
+            e nos dá tudo que precisamos para entregar algo incrível. Há! e o mais importante, <span className={currentIndex === 0 ? 'animate-free-pulse font-semibold' : 'text-fg font-medium'}>você não paga NADA!</span>
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-fg-subtle">
             <span className="flex items-center gap-1.5">

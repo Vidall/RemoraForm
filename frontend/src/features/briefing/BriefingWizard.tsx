@@ -1,7 +1,9 @@
+import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { BriefingSchema, type BriefingData } from '@remora/core';
 
+import { useWizardStep } from './WizardStepContext';
 import { WizardStepper } from './components/WizardStepper';
 import { WizardNav } from './components/WizardNav';
 import { WizardSuccess } from './components/WizardSuccess';
@@ -75,6 +77,11 @@ export function BriefingWizard() {
   const { currentIndex, currentStepId, isLast, goNext, goBack } =
     useWizardNavigation(form);
   const { isSubmitting, submitError, successData, submit } = useBriefingSubmit(form);
+
+  const { setCurrentIndex } = useWizardStep();
+  useEffect(() => {
+    setCurrentIndex(currentIndex);
+  }, [currentIndex, setCurrentIndex]);
 
   if (successData) {
     return <WizardSuccess response={successData} />;
