@@ -7,8 +7,10 @@ import { useWizardStep } from './WizardStepContext';
 import { WizardStepper } from './components/WizardStepper';
 import { WizardNav } from './components/WizardNav';
 import { WizardSuccess } from './components/WizardSuccess';
+import { StepDono } from './steps/StepDono';
 import { StepNegocioBasico } from './steps/StepNegocioBasico';
 import { StepNegocioDescricao } from './steps/StepNegocioDescricao';
+import { StepDiferenciais } from './steps/StepDiferenciais';
 import { StepContato } from './steps/StepContato';
 import { StepIdentidade } from './steps/StepIdentidade';
 import { StepHeroi } from './steps/StepHeroi';
@@ -20,11 +22,16 @@ import { useWizardNavigation } from './useWizardNavigation';
 import { useBriefingSubmit } from './useBriefingSubmit';
 
 const DEFAULT_VALUES: BriefingData = {
+  dono: {
+    sobre: '',
+    tomDeVoz: 'direto',
+  },
   negocio: {
     nome: '',
     segmento: 'perfumaria',
     descricao: '',
-    slogan: '',
+    publicoAlvo: '',
+    diferenciais: ['', ''],
   },
   contato: {
     whatsapp: '',
@@ -42,7 +49,7 @@ const DEFAULT_VALUES: BriefingData = {
     titulo: '',
     subtitulo: '',
     textoCTA: '',
-    imagemHero: '',
+    galeria: [''],
   },
   produtos: [
     {
@@ -96,10 +103,14 @@ export function BriefingWizard() {
 
   function renderStep() {
     switch (currentStepId) {
+      case 'dono':
+        return <StepDono />;
       case 'negocio-1':
         return <StepNegocioBasico />;
       case 'negocio-2':
         return <StepNegocioDescricao />;
+      case 'diferenciais':
+        return <StepDiferenciais />;
       case 'contato':
         return <StepContato />;
       case 'identidade':

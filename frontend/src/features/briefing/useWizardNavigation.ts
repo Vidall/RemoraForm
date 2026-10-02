@@ -9,8 +9,10 @@ import { WIZARD_STEPS, TOTAL_STEPS } from './wizard-config';
  * ou renomeado, atualizar AQUI também.
  */
 const FIELDS_PER_STEP: Record<string, FieldPath<BriefingData>[]> = {
+  dono: ['dono.sobre', 'dono.tomDeVoz'],
   'negocio-1': ['negocio.nome', 'negocio.segmento'],
-  'negocio-2': ['negocio.slogan', 'negocio.descricao'],
+  'negocio-2': ['negocio.descricao', 'negocio.publicoAlvo'],
+  diferenciais: ['negocio.diferenciais'],
   contato: [
     'contato.whatsapp',
     'contato.instagram',
@@ -23,7 +25,7 @@ const FIELDS_PER_STEP: Record<string, FieldPath<BriefingData>[]> = {
     'identidadeVisual.tema',
     'identidadeVisual.estiloFonte',
   ],
-  heroi: ['heroi.titulo', 'heroi.subtitulo', 'heroi.textoCTA', 'heroi.imagemHero'],
+  heroi: ['heroi.titulo', 'heroi.subtitulo', 'heroi.textoCTA', 'heroi.galeria'],
   produtos: ['produtos'],
   provas: ['provasSociais'],
   meta: ['meta.nomeCliente', 'meta.slugSubdominio', 'meta.observacoes'],

@@ -58,6 +58,20 @@ export function StepProvasSociais() {
                 error={err?.nomeCliente?.message}
                 {...register(`provasSociais.${index}.nomeCliente`)}
               />
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <Input
+                  label="Profissão (opcional)"
+                  placeholder="Ex: Advogada"
+                  error={err?.profissao?.message}
+                  {...register(`provasSociais.${index}.profissao`)}
+                />
+                <Input
+                  label="Cidade (opcional)"
+                  placeholder="Ex: São Paulo/SP"
+                  error={err?.cidade?.message}
+                  {...register(`provasSociais.${index}.cidade`)}
+                />
+              </div>
               <Textarea
                 label="Depoimento"
                 placeholder="O que o cliente disse sobre o negócio."

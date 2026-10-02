@@ -1,13 +1,3 @@
-/**
- * Configuração declarativa dos steps do wizard. Cada seção do
- * BriefingSchema vira 1 step principal, alguns quebrados em
- * sub-steps quando têm >3 campos (regra do UX).
- *
- * A ordem aqui é a ORDEM_SECOES_BRIEFING enriquecida com
- * metadados de apresentação. Título e subtítulo curtos —
- * o subtítulo é lido por leitores de tela.
- */
-
 export interface WizardStepMeta {
   /** Numeral romano exibido no stepper desktop. */
   numeral: string;
@@ -21,50 +11,62 @@ export interface WizardStepMeta {
 
 export const WIZARD_STEPS: readonly WizardStepMeta[] = [
   {
-    id: 'negocio-1',
+    id: 'dono',
     numeral: 'I',
+    title: 'Sobre você',
+    subtitle: 'Quem está por trás do negócio e como quer soar.',
+  },
+  {
+    id: 'negocio-1',
+    numeral: 'II',
     title: 'Sobre o seu negócio',
-    subtitle: 'Comece pelo essencial: nome e segmento.',
+    subtitle: 'Nome e segmento.',
   },
   {
     id: 'negocio-2',
-    numeral: 'II',
+    numeral: 'III',
     title: 'Descreva a marca',
-    subtitle: 'Slogan e descrição em poucas linhas.',
+    subtitle: 'Descrição e público-alvo.',
+  },
+  {
+    id: 'diferenciais',
+    numeral: 'IV',
+    title: 'Seus diferenciais',
+    subtitle: 'O que te separa da concorrência.',
   },
   {
     id: 'contato',
-    numeral: 'III',
+    numeral: 'V',
     title: 'Como te encontram',
     subtitle: 'Canais de contato que aparecem na landing.',
   },
   {
     id: 'identidade',
-    numeral: 'IV',
+    numeral: 'VI',
     title: 'Identidade visual',
     subtitle: 'Cores, tema e estilo tipográfico.',
   },
   {
     id: 'heroi',
-    numeral: 'V',
+    numeral: 'VII',
     title: 'Sessão de destaque',
     subtitle: 'A primeira coisa que o visitante vê.',
   },
   {
     id: 'produtos',
-    numeral: 'VI',
+    numeral: 'VIII',
     title: 'Produtos e serviços',
     subtitle: 'Cadastre o que aparece em destaque.',
   },
   {
     id: 'provas',
-    numeral: 'VII',
+    numeral: 'IX',
     title: 'Provas sociais',
     subtitle: 'Depoimentos de clientes (opcional).',
   },
   {
     id: 'meta',
-    numeral: 'VIII',
+    numeral: 'X',
     title: 'Últimos detalhes',
     subtitle: 'Dados internos e endereço do subdomínio.',
   },

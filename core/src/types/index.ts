@@ -1,6 +1,7 @@
 import type { z } from 'zod';
 import {
   BriefingSchema,
+  DonoSchema,
   NegocioSchema,
   ContatoSchema,
   IdentidadeVisualSchema,
@@ -25,6 +26,9 @@ import {
  *  importar de `@remora/core`.
  * ============================================================
  */
+
+// -------- Seção 0 — Dono
+export type DonoData = z.infer<typeof DonoSchema>;
 
 // -------- Seção 1 — Negócio
 export type NegocioData = z.infer<typeof NegocioSchema>;

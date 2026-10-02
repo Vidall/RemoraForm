@@ -1,6 +1,6 @@
 import { useFormContext, useWatch } from 'react-hook-form';
 import type { BriefingData, Segmento } from '@remora/core';
-import { Input, Textarea } from '@/components/ui';
+import { Button, Input, Textarea } from '@/components/ui';
 import {
   SEGMENT_PLACEHOLDERS,
   DEFAULT_PLACEHOLDERS,
@@ -11,12 +11,22 @@ export function StepHeroi() {
     register,
     control,
     watch,
+    setValue,
     formState: { errors },
   } = useFormContext<BriefingData>();
 
   const titulo = watch('heroi.titulo') ?? '';
   const subtitulo = watch('heroi.subtitulo') ?? '';
   const cta = watch('heroi.textoCTA') ?? '';
+  const galeria = watch('heroi.galeria') ?? [''];
+
+  function appendGaleria() {
+    setValue('heroi.galeria', [...galeria, ''], { shouldValidate: true });
+  }
+
+  function removeGaleria(index: number) {
+    setValue('heroi.galeria', galeria.filter((_, i) => i !== index), { shouldValidate: true });
+  }
 
   const segmentoValue = useWatch({ control, name: 'negocio.segmento' }) as
     | Segmento
@@ -68,24 +78,66 @@ export function StepHeroi() {
         {...register('heroi.subtitulo')}
       />
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Input
-          label="Texto do botão (CTA)"
-          placeholder="Falar no WhatsApp"
-          maxLength={40}
-          showCounter
-          currentLength={cta.length}
-          error={errors.heroi?.textoCTA?.message}
-          {...register('heroi.textoCTA')}
-        />
+      <Input
+        label="Texto do botão (CTA)"
+        placeholder="Falar no WhatsApp"
+        maxLength={40}
+        showCounter
+        currentLength={cta.length}
+        error={errors.heroi?.textoCTA?.message}
+        {...register('heroi.textoCTA')}
+      />
 
-        <Input
-          label="Nome do arquivo da imagem"
-          placeholder="hero-perfumaria.jpg"
-          error={errors.heroi?.imagemHero?.message}
-          hint="Você enviará a imagem depois pelo WhatsApp."
-          {...register('heroi.imagemHero')}
-        />
+      <div>
+        <span className="field-label">Galeria de imagens</span>
+        <p className="text-xs text-fg-muted mb-3">
+          Nomes dos arquivos que você vai enviar pelo WhatsApp. A primeira é usada como fundo do hero.
+        </p>
+
+        <div className="space-y-2">
+          {galeria.map((_, index) => {
+            const err = (errors.heroi?.galeria as Record<number, { message?: string }> | undefined)?.[index];
+            return (
+              <div key={index} className="flex items-start gap-2">
+                <div className="flex-1">
+                  <Input
+                    label={index === 0 ? 'Imagem principal (hero)' : `Imagem ${index + 1}`}
+                    placeholder={index === 0 ? 'hero-principal.jpg' : `foto-${index + 1}.jpg`}
+                    error={err?.message}
+                    {...register(`heroi.galeria.${index}`)}
+                  />
+                </div>
+                {galeria.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeGaleria(index)}
+                    className="mt-6 text-xs text-fg-muted hover:text-danger transition-colors min-h-touch px-2"
+                  >
+                    Remover
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {errors.heroi?.galeria?.message && (
+          <p className="field-error mt-2" role="alert">
+            <span aria-hidden="true">⚠</span> {errors.heroi.galeria.message}
+          </p>
+        )}
+
+        {galeria.length < 6 && (
+          <Button
+            variant="secondary"
+            size="lg"
+            fullWidth
+            onClick={appendGaleria}
+            className="mt-3"
+          >
+            + Adicionar imagem ({galeria.length}/6)
+          </Button>
+        )}
       </div>
     </div>
   );

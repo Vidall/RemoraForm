@@ -64,6 +64,27 @@ export const EstiloFonteEnum = z.enum([
 ]);
 export type EstiloFonte = z.infer<typeof EstiloFonteEnum>;
 
+export const TomDeVozEnum = z.enum([
+  'direto',
+  'emocional',
+  'sofisticado',
+  'descontraido',
+]);
+export type TomDeVoz = z.infer<typeof TomDeVozEnum>;
+
+// ---------------------------------------------------------------
+// Seção 0 — Dono (quem está por trás do negócio)
+// ---------------------------------------------------------------
+
+export const DonoSchema = z.object({
+  sobre: z
+    .string()
+    .trim()
+    .min(30, 'Conte um pouco mais sobre você — mínimo 30 caracteres')
+    .max(800, 'Máximo de 800 caracteres'),
+  tomDeVoz: TomDeVozEnum,
+});
+
 // ---------------------------------------------------------------
 // Seção 1 — Negócio
 // ---------------------------------------------------------------
@@ -80,11 +101,15 @@ export const NegocioSchema = z.object({
     .trim()
     .min(20, 'Descreva o negócio com pelo menos 20 caracteres')
     .max(500, 'Descrição deve ter no máximo 500 caracteres'),
-  slogan: z
+  publicoAlvo: z
     .string()
     .trim()
-    .min(3, 'Slogan deve ter no mínimo 3 caracteres')
-    .max(120, 'Slogan deve ter no máximo 120 caracteres'),
+    .min(5, 'Descreva o público com pelo menos 5 caracteres')
+    .max(200, 'Máximo de 200 caracteres'),
+  diferenciais: z
+    .array(z.string().trim().min(5, 'Diferencial muito curto').max(120, 'Diferencial muito longo'))
+    .min(2, 'Informe pelo menos 2 diferenciais')
+    .max(4, 'Máximo de 4 diferenciais'),
 });
 
 // ---------------------------------------------------------------
@@ -144,11 +169,10 @@ export const HeroiSchema = z.object({
     .trim()
     .min(2, 'Texto do botão muito curto')
     .max(40, 'Texto do botão deve ter no máximo 40 caracteres'),
-  imagemHero: z
-    .string()
-    .trim()
-    .min(1, 'Nome do arquivo da imagem hero é obrigatório')
-    .max(200, 'Nome do arquivo muito longo'),
+  galeria: z
+    .array(z.string().trim().min(1, 'Nome do arquivo inválido').max(200, 'Nome do arquivo muito longo'))
+    .min(1, 'Envie pelo menos 1 imagem')
+    .max(6, 'Máximo de 6 imagens'),
 });
 
 // ---------------------------------------------------------------
@@ -199,6 +223,12 @@ export const ProvaSocialSchema = z.object({
     .int('Avaliação deve ser um número inteiro')
     .min(1, 'Avaliação mínima é 1')
     .max(5, 'Avaliação máxima é 5'),
+  cidade: optionalString(
+    z.string().trim().min(2, 'Cidade muito curta').max(80, 'Cidade muito longa'),
+  ),
+  profissao: optionalString(
+    z.string().trim().min(2, 'Profissão muito curta').max(80, 'Profissão muito longa'),
+  ),
 });
 
 export const ProvasSociaisSchema = z
@@ -237,6 +267,7 @@ export const MetaSchema = z.object({
 // ---------------------------------------------------------------
 
 export const BriefingSchema = z.object({
+  dono: DonoSchema,
   negocio: NegocioSchema,
   contato: ContatoSchema,
   identidadeVisual: IdentidadeVisualSchema,
@@ -252,6 +283,7 @@ export const BriefingSchema = z.object({
  * transições parciais de rascunho no futuro.
  */
 export const ORDEM_SECOES_BRIEFING = [
+  'dono',
   'negocio',
   'contato',
   'identidadeVisual',

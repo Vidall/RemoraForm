@@ -13,6 +13,7 @@
 // Schemas Zod (validação em runtime)
 export {
   BriefingSchema,
+  DonoSchema,
   NegocioSchema,
   ContatoSchema,
   IdentidadeVisualSchema,
@@ -25,6 +26,7 @@ export {
   SegmentoEnum,
   TemaEnum,
   EstiloFonteEnum,
+  TomDeVozEnum,
   ORDEM_SECOES_BRIEFING,
 } from './schemas/briefing.schema';
 
@@ -33,11 +35,13 @@ export type {
   Segmento,
   Tema,
   EstiloFonte,
+  TomDeVoz,
   SecaoBriefing,
 } from './schemas/briefing.schema';
 
 // Tipos inferidos + envelopes de resposta
 export type {
+  DonoData,
   NegocioData,
   ContatoData,
   IdentidadeVisualData,

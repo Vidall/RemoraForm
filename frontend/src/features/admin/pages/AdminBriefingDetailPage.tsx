@@ -153,9 +153,14 @@ function DetailContent({ briefing, token, onUpdated, onUnauthorized }: DetailCon
         <Field label="Segmento">
           {SEGMENTO_LABEL[dados.negocio.segmento] ?? dados.negocio.segmento}
         </Field>
-        <Field label="Slogan">{dados.negocio.slogan}</Field>
+        <Field label="Público-alvo" span={2}>{dados.negocio.publicoAlvo}</Field>
         <Field label="Descrição" span={2}>
           <p className="whitespace-pre-wrap text-fg">{dados.negocio.descricao}</p>
+        </Field>
+        <Field label="Diferenciais" span={2}>
+          <ul className="list-disc list-inside space-y-1">
+            {dados.negocio.diferenciais.map((d, i) => <li key={i} className="text-sm text-fg">{d}</li>)}
+          </ul>
         </Field>
       </Section>
 
@@ -207,8 +212,12 @@ function DetailContent({ briefing, token, onUpdated, onUnauthorized }: DetailCon
           <p className="whitespace-pre-wrap text-fg">{dados.heroi.subtitulo}</p>
         </Field>
         <Field label="Texto do CTA">{dados.heroi.textoCTA}</Field>
-        <Field label="Imagem hero">
-          <span className="font-mono text-xs text-fg-muted">{dados.heroi.imagemHero}</span>
+        <Field label="Galeria" span={2}>
+          <div className="flex flex-wrap gap-2">
+            {dados.heroi.galeria.map((img, i) => (
+              <span key={i} className="font-mono text-xs text-fg-muted bg-bg-elevated border border-border rounded px-2 py-1">{img}</span>
+            ))}
+          </div>
         </Field>
       </Section>
 

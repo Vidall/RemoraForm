@@ -25,11 +25,16 @@ model Briefing {
   publicadoEm  DateTime? @map("publicado_em")
   arquivadoEm  DateTime? @map("arquivado_em")
 
+  // Seção 0 — Dono
+  donoSobre    String @default("") @map("dono_sobre")
+  donoTomDeVoz String @default("direto") @map("dono_tom_de_voz")
+
   // Seção 1 — Negócio
-  negocioNome      String @map("negocio_nome")
-  negocioSegmento  String @map("negocio_segmento")
-  negocioDescricao String @map("negocio_descricao")
-  negocioSlogan    String @map("negocio_slogan")
+  negocioNome         String @map("negocio_nome")
+  negocioSegmento     String @map("negocio_segmento")
+  negocioDescricao    String @map("negocio_descricao")
+  negocioPublicoAlvo  String @default("") @map("negocio_publico_alvo")
+  negocioDiferenciais Json   @default("[]") @map("negocio_diferenciais")
 
   // Seção 2 — Contato
   contatoWhatsapp  String  @map("contato_whatsapp")
@@ -47,7 +52,7 @@ model Briefing {
   heroTitulo    String @map("hero_titulo")
   heroSubtitulo String @map("hero_subtitulo")
   heroTextoCTA  String @map("hero_texto_cta")
-  heroImagem    String @map("hero_imagem")
+  heroGaleria   Json   @default("[]") @map("hero_galeria")
 
   // Seção 5 — Produtos (array JSON)
   produtos Json

@@ -21,11 +21,16 @@ export class BriefingMapper {
    */
   static toDomain(row: BriefingRow): BriefingResponse {
     const dados: BriefingData = {
+      dono: {
+        sobre: row.donoSobre,
+        tomDeVoz: row.donoTomDeVoz as BriefingData['dono']['tomDeVoz'],
+      },
       negocio: {
         nome: row.negocioNome,
         segmento: row.negocioSegmento as BriefingData['negocio']['segmento'],
         descricao: row.negocioDescricao,
-        slogan: row.negocioSlogan,
+        publicoAlvo: row.negocioPublicoAlvo,
+        diferenciais: (row.negocioDiferenciais as unknown as string[]) ?? [],
       },
       contato: {
         whatsapp: row.contatoWhatsapp,
@@ -44,7 +49,7 @@ export class BriefingMapper {
         titulo: row.heroTitulo,
         subtitulo: row.heroSubtitulo,
         textoCTA: row.heroTextoCTA,
-        imagemHero: row.heroImagem,
+        galeria: (row.heroGaleria as unknown as string[]) ?? [],
       },
       produtos: (row.produtos as unknown as ProdutoData[]) ?? [],
       provasSociais:
@@ -80,10 +85,14 @@ export class BriefingMapper {
       status: 'submetido',
       submetidoEm: new Date(),
 
+      donoSobre: data.dono.sobre,
+      donoTomDeVoz: data.dono.tomDeVoz,
+
       negocioNome: data.negocio.nome,
       negocioSegmento: data.negocio.segmento,
       negocioDescricao: data.negocio.descricao,
-      negocioSlogan: data.negocio.slogan,
+      negocioPublicoAlvo: data.negocio.publicoAlvo,
+      negocioDiferenciais: data.negocio.diferenciais as unknown as Prisma.InputJsonValue,
 
       contatoWhatsapp: BriefingMapper.normalizeWhatsapp(data.contato.whatsapp),
       contatoInstagram: data.contato.instagram
@@ -102,7 +111,7 @@ export class BriefingMapper {
       heroTitulo: data.heroi.titulo,
       heroSubtitulo: data.heroi.subtitulo,
       heroTextoCTA: data.heroi.textoCTA,
-      heroImagem: data.heroi.imagemHero,
+      heroGaleria: data.heroi.galeria as unknown as Prisma.InputJsonValue,
 
       produtos: data.produtos as unknown as Prisma.InputJsonValue,
       provasSociais: (data.provasSociais ??
